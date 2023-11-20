@@ -65,6 +65,7 @@ class FwfhTextStyle extends _TextStyleProxy {
     Locale? locale,
     List<ui.Shadow>? shadows,
     List<ui.FontFeature>? fontFeatures,
+    List<ui.FontVariation>? fontVariations,
     String? package,
     TextOverflow? overflow,
   }) =>
@@ -94,6 +95,7 @@ class FwfhTextStyle extends _TextStyleProxy {
           locale: locale,
           shadows: shadows,
           fontFeatures: fontFeatures,
+          fontVariations: fontVariations, // Add this line
           package: package,
           overflow: overflow,
         ),
@@ -126,6 +128,7 @@ class FwfhTextStyle extends _TextStyleProxy {
     List<String>? fontFamilyFallback,
     String? package,
     TextOverflow? overflow,
+    List<ui.FontVariation>? fontVariations,
   }) {
     String? newDebugLabel;
     assert(
@@ -167,6 +170,7 @@ class FwfhTextStyle extends _TextStyleProxy {
         fontFamilyFallback: fontFamilyFallback ?? this.fontFamilyFallback,
         package: package,
         overflow: overflow ?? this.overflow,
+        fontVariations: fontVariations ?? this.fontVariations,
       ),
     );
   }
@@ -175,6 +179,9 @@ class FwfhTextStyle extends _TextStyleProxy {
   TextStyle merge(TextStyle? other) => FwfhTextStyle.from(
         ref.merge(other is FwfhTextStyle ? other.ref : other),
       );
+
+  @override
+  List<ui.FontVariation>? get fontVariations => ref.fontVariations;
 }
 
 class _DefaultValue {
@@ -244,24 +251,24 @@ abstract class _TextStyleProxy implements TextStyle {
 
   @override
   ui.ParagraphStyle getParagraphStyle({
-    TextAlign? textAlign,
-    TextDirection? textDirection,
-    double textScaleFactor = 1.0,
+    ui.TextAlign? textAlign,
+    ui.TextDirection? textDirection,
+    TextScaler textScaler = TextScaler.noScaling,
     String? ellipsis,
     int? maxLines,
-    TextHeightBehavior? textHeightBehavior,
-    Locale? locale,
+    ui.TextHeightBehavior? textHeightBehavior,
+    ui.Locale? locale,
     String? fontFamily,
     double? fontSize,
-    FontWeight? fontWeight,
-    FontStyle? fontStyle,
+    ui.FontWeight? fontWeight,
+    ui.FontStyle? fontStyle,
     double? height,
     StrutStyle? strutStyle,
   }) =>
       ref.getParagraphStyle(
         textAlign: textAlign,
         textDirection: textDirection,
-        textScaleFactor: textScaleFactor,
+        textScaler: textScaler,
         ellipsis: ellipsis,
         maxLines: maxLines,
         textHeightBehavior: textHeightBehavior,
@@ -275,8 +282,13 @@ abstract class _TextStyleProxy implements TextStyle {
       );
 
   @override
-  ui.TextStyle getTextStyle({double textScaleFactor = 1.0}) =>
-      ref.getTextStyle(textScaleFactor: textScaleFactor);
+  ui.TextStyle getTextStyle({
+    double textScaleFactor = 1.0,
+    TextScaler textScaler = TextScaler.noScaling,
+  }) =>
+      ref.getTextStyle(
+        textScaler: textScaler,
+      );
 
   @override
   bool operator ==(Object other) {
